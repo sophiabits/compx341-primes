@@ -39,37 +39,10 @@ def get_stored_primes() -> typing.List[int]:
 )
 def store_prime(number: int):
     cache.set(f'{KEY_PREFIX}{number}', '')
-    # retries = 5
-    # while True:
-    #     try:
-    #         return cache.set(number, True)
-    #     except redis.exceptions.ConnectionError as exc:
-    #         if retries == 0:
-    #             raise exc
-    #         retries -= 1
-    #         time.sleep(0.5)
-
-# def get_hit_count():
-#     retries = 5
-#     while True:
-#         try:
-#             return cache.incr('hits')
-#         except redis.exceptions.ConnectionError as exc:
-#             if retries == 0:
-#                 raise exc
-#             retries -= 1
-#             time.sleep(0.5)
-
-
-# @app.route('/')
-# def hello():
-#     count = get_hit_count()
-#     return 'Hello World! I have been seen {} times.\n'.format(count)
 
 @app.route('/isPrime/<int:number>', methods=['GET'])
 def is_prime(number):
     if check_prime(number):
-        print(f'Storing {number} into Redis...', file=sys.stderr)
         store_prime(number)
         return f'{number} is prime'
     else:
@@ -78,5 +51,4 @@ def is_prime(number):
 @app.route('/primesStored', methods=['GET'])
 def primes_stored():
     primes = get_stored_primes()
-    print(primes, file=sys.stderr)
     return json.dumps(primes)
